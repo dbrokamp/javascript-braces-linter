@@ -23,46 +23,50 @@ package com.company;
  */
 public class Linter {
 
-    private enum Errors {
+    private enum Messages {
         NO_OPENING_BRACE("No opening brace to match closing brace: "),
         NO_CLOSING_BRACE("No closing brace was found to match: "),
-        NOT_A_MATCH("Closing brace does not match opening brace: ");
+        NOT_A_MATCH("Closing brace does not match opening brace: "),
+        IS_A_MATCH("Opening and closing braces found: "),
+        STRING_IS_EMPTY("No text found to lint.");
 
 
+        private final String message;
 
-        private final String errorText;
-
-        Errors(String errorText) {
-            this.errorText = errorText;
+        Messages(String message) {
+            this.message = message;
         }
+
     }
 
     // Create stack to store braces
-    private Stack<Character> stack = new Stack<Character>();
+    private final Stack<Character> stack = new Stack<>();
 
     public void linter(String string) {
 
+        if (string.isEmpty()) {
+            System.out.println(Messages.STRING_IS_EMPTY.message);
+            return;
+        }
+
         char[] characters = string.toCharArray();
 
-        for (int i = 0; i < characters.length; i++) {
-            char currentCharacter = characters[i];
+        for (char currentCharacter : characters) {
             if (isOpeningBrace(currentCharacter)) {
                 stack.push(currentCharacter);
             } else if (isClosingBrace(currentCharacter)) {
                 Character poppedBrace = stack.pop();
                 if (poppedBrace == null) {
-                    System.out.println(Errors.NO_OPENING_BRACE.errorText + currentCharacter);
-                } else if (isAMatch(poppedBrace, currentCharacter)) {
-                    System.out.println("Match for braces found: " + poppedBrace + " " + currentCharacter);
-                } else if (!isAMatch(poppedBrace, currentCharacter)) {
-                    System.out.println((Errors.NOT_A_MATCH.errorText + poppedBrace + " " + currentCharacter));
+                    System.out.println(Messages.NO_OPENING_BRACE.message + currentCharacter);
+                } else {
+                    isAMatch(poppedBrace, currentCharacter);
                 }
             }
         }
 
         if (stack.peek() != null) {
             do {
-                System.out.println(Errors.NO_CLOSING_BRACE.errorText + stack.pop());
+                System.out.println(Messages.NO_CLOSING_BRACE.message + stack.pop());
             } while (stack.peek() != null);
         } else {
             System.out.println("No opening/closing brace errors found.");
@@ -86,15 +90,15 @@ public class Linter {
         }
     }
 
-    private boolean isAMatch(Character openingBrace, Character closingBrace) {
+    private void isAMatch(Character openingBrace, Character closingBrace) {
         if ((openingBrace == '(') && (closingBrace == ')')) {
-            return true;
+            System.out.println(Messages.IS_A_MATCH.message + openingBrace + " " + closingBrace);
         } else if ((openingBrace == '{') && (closingBrace == '}')) {
-            return true;
+            System.out.println(Messages.IS_A_MATCH.message + openingBrace + " " + closingBrace);
         } else if ((openingBrace == '[') && (closingBrace == ']')) {
-            return true;
+            System.out.println(Messages.IS_A_MATCH.message + openingBrace + " " + closingBrace);
         } else {
-            return false;
+            System.out.println(Messages.NOT_A_MATCH.message + openingBrace + " " + closingBrace);
         }
     }
 
