@@ -39,8 +39,7 @@ public class Linter {
 
     }
 
-    // Create stack to store braces
-    private final Stack<Character> stack = new Stack<>();
+    private final Stack<Character> openingBracesStack = new Stack<>();
 
     public void linter(String string) {
 
@@ -53,20 +52,20 @@ public class Linter {
 
         for (char currentCharacter : characters) {
             if (isOpeningBrace(currentCharacter)) {
-                stack.push(currentCharacter);
+                openingBracesStack.push(currentCharacter);
             } else if (isClosingBrace(currentCharacter)) {
-                if (stack.peek() == null) {
+                if (openingBracesStack.peek() == null) {
                     System.out.println(Messages.NO_OPENING_BRACE.message + currentCharacter);
                 } else {
-                    isAMatch(stack.peek(), currentCharacter);
+                    isAMatch(openingBracesStack.peek(), currentCharacter);
                 }
             }
         }
 
-        if (stack.peek() != null) {
+        if (openingBracesStack.peek() != null) {
             do {
-                System.out.println(Messages.NO_CLOSING_BRACE.message + stack.pop());
-            } while (stack.peek() != null);
+                System.out.println(Messages.NO_CLOSING_BRACE.message + openingBracesStack.pop());
+            } while (openingBracesStack.peek() != null);
         } else {
             System.out.println("Lint complete.");
         }
@@ -92,13 +91,13 @@ public class Linter {
     private void isAMatch(Character openingBrace, Character closingBrace) {
         if ((openingBrace == '(') && (closingBrace == ')')) {
             System.out.println(Messages.IS_A_MATCH.message + openingBrace + " " + closingBrace);
-            stack.pop();
+            openingBracesStack.pop();
         } else if ((openingBrace == '{') && (closingBrace == '}')) {
             System.out.println(Messages.IS_A_MATCH.message + openingBrace + " " + closingBrace);
-            stack.pop();
+            openingBracesStack.pop();
         } else if ((openingBrace == '[') && (closingBrace == ']')) {
             System.out.println(Messages.IS_A_MATCH.message + openingBrace + " " + closingBrace);
-            stack.pop();
+            openingBracesStack.pop();
         } else {
             System.out.println(Messages.NOT_A_MATCH.message + openingBrace + " " + closingBrace);
         }
